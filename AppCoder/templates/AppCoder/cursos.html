@@ -5,6 +5,18 @@
 {% block contenidoQueCambia %}
 
     <!-- Aqui va lo que cambia, y lo asociado a esta vista -->
-    <h3>CURSOS</h3>
+    {% if miFormulario.errors %}
+    <p style="color: red;">Están mal los datos, revisar</p>
+    {% endif %}
+
+    <form action="" method="POST">{% csrf_token%}
+        <!-- Aca esta la magia de Django -->
+        <table>
+            {{ miFormulario.as_table }}
+        </table>
+
+        <input type="submit", value="Enviar">
+
+    </form>
 
 {% endblock %}

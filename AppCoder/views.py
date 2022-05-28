@@ -1,8 +1,8 @@
 from curses.ascii import HT
 from django.http import HttpResponse
 from django.shortcuts import render
-from AppCoder.forms import CursoFormulario
-from AppCoder.models import Curso
+from AppCoder.forms import CursoFormulario, ProfesorFormulario
+from AppCoder.models import Curso, Profesor
 
 # Create your views here.
 #def curso(self):
@@ -47,3 +47,20 @@ def cursoFormulario(request):
         miFormulario = CursoFormulario() #Formulario vacio para construir el html
 
     return render(request, "AppCoder/cursoFormulario.html", {"miFormulario": miFormulario})
+
+def profesorFormulario(request):
+    if request.method == 'POST':
+        miFormulario = ProfesorFormulario(request.POST) #Aqui llega toda la informacion del html.
+        print(miFormulario)
+        
+        if miFormulario.is_valid:  #Si pasó la validación de Django.
+            informacion = miFormulario.cleaned_data
+
+            profesor = Profesor(nombre=informacion['nombre'], apellido=informacion['apellido'], email=informacion['email'], profesion=informacion['profesion'],)
+            profesor.save()
+            return render(request, "AppCoder/inicio.html")  #Vuelvo al inicio o donde se desee.
+    
+    else:
+        miFormulario = ProfesorFormulario() #Formulario vacio para construir el html
+
+    return render(request, "AppCoder/profesorFormulario.html", {"miFormulario": miFormulario})

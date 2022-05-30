@@ -1,75 +1,89 @@
 from curses.ascii import HT
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render
-from AppCoder.forms import CursoFormulario, ProfesorFormulario
-from AppCoder.models import Curso
-#def curso(self):
-#    curso = Curso(nombre="Desarrollo Web", camada="19881")
-#    curso.save()
-#    documentoDeTexto = f"--->Curso: {curso.nombre} Camada:{curso.camada}"
-#
-#    return HttpResponse(documentoDeTexto)
+from AppCoder.forms import BuscarCursoForm, BuscarEstudianteForm, BuscarProfesorForm, CursoForm, ProfesorForm, EstudianteForm
+from AppCoder.models import Curso, Estudiante, Profesor
 
-def inicio(request):
-    return render(request, "AppCoder/inicio.html")
+def index(request):
+    return render(request, "AppCoder/index.html")
 
-#def cursos(request):
-#    return render(request, "AppCoder/cursos.html")
-
-def profesores(request):
-    return render(request, "AppCoder/profesores.html")
-
-def estudiantes(request):
-    return render(request, "AppCoder/estudiantes.html")
-
-def entregables(request):
-    return render(request, "AppCoder/entregables.html")
-
-def cursos(request):
-    if request.method == 'POST':
-        miFormulario = CursoFormulario(request.POST) #Aqui llega toda la informacion del html.
-        print(miFormulario)
-        
-        if miFormulario.is_valid:  #Si pasó la validación de Django.
-            informacion = miFormulario.cleaned_data
-            curso = Curso(nombre=informacion['curso'], camada=informacion['camada'])
-            curso.save()
-            return render(request, "AppCoder/inicio.html")  #Vuelvo al inicio o donde se desee.
-    
+def agregar_curso(request):
+    if request.method == "POST":
+        form = CursoForm(request.POST)
+        if form.is_valid():
+            curso = form.cleaned_data['curso']
+            camada = form.cleaned_data['camada']
+            Curso(curso=curso, camada=camada).save()
+            return HttpResponseRedirect("/")
+    elif request.method == "GET":
+        form = CursoForm()
     else:
-        miFormulario = CursoFormulario() #Formulario vacio para construir el html
+        return HttpResponseBadRequest("Error no conzco ese metodo para esta request")
+    return render(request, 'AppCoder/form_carga_curso.html', {'form': form})
 
-    return render(request, "AppCoder/cursos.html", {"miFormulario": miFormulario})
 
-def profesorFormulario(request):
-    if request.method == 'POST':
-        miFormulario = ProfesorFormulario(request.POST) #Aqui llega toda la informacion del html.
-        print(miFormulario)
-        
-        if miFormulario.is_valid:  #Si pasó la validación de Django.
-            informacion = miFormulario.cleaned_data
-
-            profesor = Profesor(nombre=informacion['nombre'], apellido=informacion['apellido'], email=informacion['email'], profesion=informacion['profesion'],)
-            profesor.save()
-            return render(request, "AppCoder/inicio.html")  #Vuelvo al inicio o donde se desee.
-    
+def agregar_profesor(request):
+    if request.method == "POST":
+        form = ProfesorForm(request.POST)
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            email = form.cleaned_data['email']
+            profesion = form.cleaned_data['profesion']
+            Profesor(nombre=nombre, apellido=apellido, email=email, profesion=profesion).save()
+            return HttpResponseRedirect("/")
+    elif request.method == "GET":
+        form = ProfesorForm()
     else:
-        miFormulario = ProfesorFormulario() #Formulario vacio para construir el html
+        return HttpResponseBadRequest("Error no conzco ese metodo para esta request")
+    return render(request, 'AppCoder/form_carga_profesor.html', {'form': form})
 
-    return render(request, "AppCoder/profesorFormulario.html", {"miFormulario": miFormulario})
 
-def busquedaCamada(request):
-     return render(request, "AppCoder/busquedaCamada.html")
-
-def buscar(request):
-    if request.GET["camada"]:
-
-        #respuesta = f"Estoy buscando la camada nro: {request.GET['camada']}"
-        camada = request.GET['camada']
-        cursos = Curso.objects.filter(camada__icontains = camada)
-        
-        return render(request, "AppCoder/busquedaCamada.html", {"cursos": cursos, "camada": camada})
+def agregar_estudiante(request):
+    if request.method == "POST":
+        form = EstudianteForm(request.POST)
+        if form.is_valid():
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            email = form.cleaned_data['email']
+            Estudiante(nombre=nombre, apellido=apellido, email=email).save()
+            return HttpResponseRedirect("/")
+    elif request.method == "GET":
+        form = EstudianteForm()
     else:
-        respuesta = "No enviaste datos"
-#    #No olvidar from django.http impost HttpResponse
-    return render(request, "AppCoder/inicio.html", {"respuesta": respuesta})
+        return HttpResponseBadRequest("Error no conzco ese metodo para esta request")
+    return render(request, 'AppCoder/form_carga_estudiante.html', {'form': form})
+
+
+def buscar_curso(request):
+    if request.method == "GET":
+        form_busqueda_curso = BuscarCursoForm()
+        return render(request, 'AppCoder/form_busqueda_curso.html', {"form_busqueda_curso": form_busqueda_curso})
+    elif request.method == "POST":
+        form_busqueda_curso = BuscarCursoForm(request.POST)
+        if form_busqueda_curso.is_valid():
+            palabra_a_buscar = form_busqueda_curso.cleaned_data['palabra_a_buscar']
+            cursos = Curso.objects.filter(camada__icontains=palabra_a_buscar)
+    return  render(request, 'AppCoder/lista_cursos.html', {"cursos": cursos})
+
+def buscar_estudiante(request):
+    if request.method == "GET":
+        form_busqueda_estudiante = BuscarEstudianteForm()
+        return render(request, 'AppCoder/form_busqueda_estudiante.html', {"form_busqueda_estudiante": form_busqueda_estudiante})
+    elif request.method == "POST":
+        form_busqueda_estudiante = BuscarEstudianteForm(request.POST)
+        if form_busqueda_estudiante.is_valid():
+            palabra_a_buscar = form_busqueda_estudiante.cleaned_data['palabra_a_buscar']
+            estudiantes = Estudiante.objects.filter(nombre__icontains=palabra_a_buscar)
+    return  render(request, 'AppCoder/lista_estudiantes.html', {"estudiantes": estudiantes})
+
+def buscar_profesor(request):
+    if request.method == "GET":
+        form_busqueda_profesor = BuscarProfesorForm()
+        return render(request, 'AppCoder/form_busqueda_profesor.html', {"form_busqueda_profesor": form_busqueda_profesor})
+    elif request.method == "POST":
+        form_busqueda_profesor = BuscarProfesorForm(request.POST)
+        if form_busqueda_profesor.is_valid():
+            palabra_a_buscar = form_busqueda_profesor.cleaned_data['palabra_a_buscar']
+            profesores = Profesor.objects.filter(nombre__icontains=palabra_a_buscar)
+    return  render(request, 'AppCoder/lista_profesores.html', {"profesores": profesores})

@@ -1,0 +1,36 @@
+{% extends "AppCoder/index.html" %}
+
+{% load bootstrap5 %}
+
+{% block cuerpo %}
+<div class="section">
+  <div class="row">
+    <div class="col">
+        {% if estudiantes %}
+        <table class="table">
+            <thead>
+                <th scope="col">Identificador</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Email</th>
+            </thead>
+            {% for estudiante in estudiantes %}
+            <tbody>
+                <tr>
+                    <th scope="row">{{estudiante.id}} </th>
+                    <td> {{estudiante.nombre}} </td>
+                    <td> {{estudiante.apellido}} </td>
+                    <td> {{estudiante.email}} </td>
+                    <!-- {% url 'borrar' identificador=estudiante.id as borrar_url %}
+                    <td>{% bootstrap_button "Borrar" size="sm" button_class="btn-danger" button_type="link" href=borrar_url %}</td> -->
+                </tr>  
+            </tbody>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>No hay datos cargados</p>
+        {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

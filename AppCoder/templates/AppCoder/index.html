@@ -1,0 +1,74 @@
+{% load bootstrap5 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<!-- <esto es la cabecera/header> -->
+<body id="page-top">
+
+  <!-- Navigation-->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="{%url  'index' %}">CODERHOUSE - ENTREGA 1</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header-->
+  <header class="bg-light">
+    <div class="container px-4 text-center">
+        <h1 class="fw-bolder"></h1>
+        <p class="lead"></p>
+    </div><br>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-4">
+          {% url 'agregar_curso' as agregar_curso_url %}
+          {% bootstrap_button "Agregar Curso" button_class="btn-success" button_type="link" href=agregar_curso_url %}
+          
+          {% url 'buscar_curso' as buscar_curso_url %}
+          {% bootstrap_button "Buscar Curso" button_class="btn-secondary" button_type="link" href=buscar_curso_url %}
+        </div>
+
+        <div class="col-4">
+          {% url 'agregar_profesor' as agregar_profesor_url %}
+          {% bootstrap_button "Agregar Profesor" button_class="btn-success" button_type="link" href=agregar_profesor_url %}
+         
+          {% url 'buscar_profesor' as buscar_profesor_url %}
+          {% bootstrap_button "Buscar Profesor" button_class="btn-secondary" button_type="link" href=buscar_profesor_url %}
+        </div>
+
+        <div class="col-4">
+          {% url 'agregar_estudiante' as agregar_estudiante_url %}
+          {% bootstrap_button "Agregar Estudiante" button_class="btn-success" button_type="link" href=agregar_estudiante_url %} 
+
+          {% url 'buscar_estudiante' as buscar_estudiante_url %}
+          {% bootstrap_button "Buscar Estudiante" button_class="btn-secondary" button_type="link" href=buscar_estudiante_url %}
+        </div>
+      </div><br>
+    </div>
+
+  </header><br>
+
+  <div class="section">
+
+  {% block  cuerpo %}
+  
+  {% endblock %}
+  
+  {# Display django.contrib.messages as Bootstrap alerts #}
+  {% bootstrap_messages %}
+  </div>
+  
+</body>
+
+<!-- <esto es el pie/ footer > -->
+<footer class="bg-dark fixed-bottom">
+  <div class="container-fluid">
+    <div class="navbar-default">
+      <a class="navbar-brand" href="{%url  'index' %}">CODERHOUSE - Python 36585 - {% now 'D, d M Y'%}</a>
+    </div>
+  </div>
+</footer>
